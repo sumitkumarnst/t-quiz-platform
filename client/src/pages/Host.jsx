@@ -76,8 +76,14 @@ export default function Host() {
 
         try {
             // Dynamic upload URL
-            const hostname = window.location.hostname;
-            const res = await fetch(`http://${hostname}:3000/upload`, {
+            // In Production (Render), we use relative path '/upload'
+            // In Dev (Vite), we use full URL with port 3000
+            const isProduction = import.meta.env.PROD;
+            const uploadUrl = isProduction
+                ? '/upload'
+                : `http://${window.location.hostname}:3000/upload`;
+
+            const res = await fetch(uploadUrl, {
                 method: 'POST',
                 body: formData
             });
