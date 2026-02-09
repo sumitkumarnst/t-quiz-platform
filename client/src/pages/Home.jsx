@@ -14,7 +14,7 @@ export default function Home() {
 
             {/* Glowing Yellow Lights (Subtle & Slow) - Adjusted positions to avoid button overlap */}
             <div className="absolute top-[-50px] right-[-50px] w-64 h-64 bg-yellow-400/15 rounded-full blur-[120px] animate-pulse-slow"></div>
-            <div className="absolute bottom-[-50px] left-[-50px] w-64 h-64 bg-yellow-300/10 rounded-full blur-[120px] animate-pulse-slow " style={{ animationDelay: '1s' }}></div>
+            {/* Bottom-left light removed to fix artifact */}
             <div className="absolute top-1/4 right-1/4 w-32 h-32 bg-yellow-200/10 rounded-full blur-[80px] animate-pulse-slow " style={{ animationDelay: '2s' }}></div>
 
             <div className="z-10 text-center space-y-8 flex flex-col items-center">
