@@ -8,12 +8,17 @@ export default function Home() {
             <div className="absolute top-10 left-10 w-32 h-32 bg-white/10 rounded-full blur-xl animate-pulse"></div>
             <div className="absolute bottom-20 right-20 w-48 h-48 bg-kahoot-yellow/20 rounded-full blur-xl animate-pulse delay-75"></div>
 
-            <div className="z-10 text-center space-y-8">
+            <div className="z-10 text-center space-y-8 flex flex-col items-center">
+                <img
+                    src="https://d3oznw89j3v0be.cloudfront.net/branding/ns-white-logo.svg"
+                    alt="Newton School of Technology"
+                    className="h-12 mb-2 drop-shadow-md opacity-90"
+                />
                 <h1 className="text-6xl font-black text-white drop-shadow-lg tracking-tight mb-2">
                     NST QUIZ
                 </h1>
                 <p className="text-white/80 text-xl font-medium max-w-md mx-auto">
-                    The ultimate competitive learning platform for BTE students.
+                    The ultimate competitive learning platform.
                 </p>
 
                 <div className="flex flex-col sm:flex-row gap-6 mt-12">
