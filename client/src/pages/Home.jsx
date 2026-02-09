@@ -3,10 +3,19 @@ import { Gamepad2, GraduationCap } from 'lucide-react';
 
 export default function Home() {
     return (
-        <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-kahoot-purple to-nst-dark p-4 relative overflow-hidden">
-            {/* Background shapes */}
-            <div className="absolute top-10 left-10 w-32 h-32 bg-white/10 rounded-full blur-xl animate-pulse"></div>
-            <div className="absolute bottom-20 right-20 w-48 h-48 bg-kahoot-yellow/20 rounded-full blur-xl animate-pulse delay-75"></div>
+        <div className="flex flex-col items-center justify-center min-h-screen relative overflow-hidden">
+            {/* Background Image */}
+            <div
+                className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat blur-sm scale-105"
+                style={{ backgroundImage: "url('https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg/1280px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg')" }}
+            >
+                <div className="absolute inset-0 bg-black/40"></div> {/* Dark overlay for readability */}
+            </div>
+
+            {/* Glowing Yellow Lights */}
+            <div className="absolute top-20 right-20 w-32 h-32 bg-yellow-400/60 rounded-full blur-[80px] animate-pulse"></div>
+            <div className="absolute bottom-1/3 left-1/4 w-24 h-24 bg-yellow-300/50 rounded-full blur-[60px] animate-pulse delay-700"></div>
+            <div className="absolute top-1/3 right-1/3 w-20 h-20 bg-yellow-200/40 rounded-full blur-[50px] animate-pulse delay-1000"></div>
 
             <div className="z-10 text-center space-y-8 flex flex-col items-center">
                 <img
