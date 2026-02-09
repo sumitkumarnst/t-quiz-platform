@@ -6,16 +6,11 @@ export default function Home() {
         <div className="flex flex-col items-center justify-center min-h-screen relative overflow-hidden">
             {/* Background Image */}
             <div
-                className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat blur-lg scale-110"
+                className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat blur-sm scale-105"
                 style={{ backgroundImage: "url('https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg/1280px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg')" }}
             >
-                <div className="absolute inset-0 bg-blue-950/80 mix-blend-multiply"></div> {/* Darker blue overlay */}
+                <div className="absolute inset-0 bg-blue-950/60"></div> {/* Standard dark blue overlay */}
             </div>
-
-            {/* Glowing Yellow Lights (Subtle & Slow) */}
-            <div className="absolute top-20 right-20 w-48 h-48 bg-yellow-400/30 rounded-full blur-[100px] animate-pulse-slow"></div>
-            <div className="absolute bottom-1/3 left-1/4 w-36 h-36 bg-yellow-300/20 rounded-full blur-[80px] animate-pulse-slow " style={{ animationDelay: '1s' }}></div>
-            <div className="absolute top-1/3 right-1/3 w-32 h-32 bg-yellow-200/20 rounded-full blur-[60px] animate-pulse-slow " style={{ animationDelay: '2s' }}></div>
 
             <div className="z-10 text-center space-y-8 flex flex-col items-center">
                 <img
