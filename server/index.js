@@ -20,6 +20,15 @@ const { GoogleGenerativeAI } = require("@google/generative-ai");
 const app = express();
 app.use(cors());
 
+// Health Check / Version
+app.get('/health', (req, res) => {
+    res.json({
+        status: 'ok',
+        version: '1.2.0',
+        update: 'Fixed PPTX/PDF and AI Model'
+    });
+});
+
 // DEBUG: Check if API Key is loaded
 const key = process.env.GEMINI_API_KEY;
 console.log("Loaded API Key:", key ? `${key.substring(0, 5)}...${key.substring(key.length - 4)}` : "UNDEFINED");
