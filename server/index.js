@@ -24,8 +24,8 @@ app.use(cors());
 app.get('/health', (req, res) => {
     res.json({
         status: 'ok',
-        version: '1.2.0',
-        update: 'Fixed PPTX/PDF and AI Model'
+        version: '1.2.1',
+        update: 'Visual Enhancements (Glowing Bulbs)'
     });
 });
 
