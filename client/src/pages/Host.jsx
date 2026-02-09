@@ -140,22 +140,30 @@ export default function Host() {
     };
 
     // Save to LocalStorage
-    const handleSaveQuiz = () => {
+    // Save to Server
+    const handleSaveQuiz = async () => {
         const title = quizTitle.trim() || `Quiz ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}`;
         if (!confirm(`Save this quiz as "${title}"?`)) return;
 
-        const newQuiz = {
-            id: Date.now().toString(),
-            title: title,
-            questions: questions,
-            createdAt: new Date().toISOString()
-        };
+        try {
+            const isProduction = import.meta.env.PROD;
+            const url = isProduction ? '/quizzes' : `http://${window.location.hostname}:3000/quizzes`;
 
-        const saved = localStorage.getItem('nst_quizzes');
-        const quizzes = saved ? JSON.parse(saved) : [];
-        quizzes.unshift(newQuiz); // Add to top
-        localStorage.setItem('nst_quizzes', JSON.stringify(quizzes));
-        alert("Quiz saved to Library!");
+            const res = await fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ title, questions })
+            });
+
+            if (res.ok) {
+                alert("Quiz saved to Library (Server)!");
+            } else {
+                throw new Error("Save failed");
+            }
+        } catch (e) {
+            console.error(e);
+            alert("Failed to save quiz to server.");
+        }
     };
 
     const handleCreateGame = () => {

@@ -138,17 +138,76 @@ app.post('/generate-quiz', upload.array('files'), async (req, res) => {
         const response = await result.response;
         let jsonString = response.text();
 
-        // Cleanup potential markdown formatting
-        jsonString = jsonString.replace(/```json/g, '').replace(/```/g, '').trim();
+        // Sanitize JSON
+        let jsonStr = jsonString.replace(/```json/g, '').replace(/```/g, '').trim();
 
-        const questions = JSON.parse(jsonString);
-
-        res.json({ questions });
+        try {
+            const quizData = JSON.parse(jsonStr);
+            res.json({ questions: quizData });
+        } catch (e) {
+            console.error("JSON Parse Error:", e, "\nRaw Text:", jsonStr);
+            try {
+                // Formatting fix for simple backslashes if they forgot to escape
+                const fixedStr = jsonStr.replace(/\\(?!["\\/bfnrtu])/g, '\\\\');
+                const quizData = JSON.parse(fixedStr);
+                res.json({ questions: quizData });
+            } catch (e2) {
+                res.status(500).json({ error: "AI generated invalid JSON. Please try again. (Raw: " + e.message + ")" });
+            }
+        }
 
     } catch (error) {
         console.error("AI Gen Error:", error);
         res.status(500).json({ error: error.message || 'Failed to generate quiz' });
     }
+});
+
+
+// --- QUIZ STORAGE (Server File) ---
+const QUIZZES_FILE = path.join(__dirname, 'quizzes.json');
+
+// Helper to read quizzes
+const getQuizzes = () => {
+    if (!fs.existsSync(QUIZZES_FILE)) return [];
+    try {
+        return JSON.parse(fs.readFileSync(QUIZZES_FILE, 'utf8'));
+    } catch (e) {
+        return [];
+    }
+};
+
+// Helper to save quizzes
+const saveQuizzes = (quizzes) => {
+    fs.writeFileSync(QUIZZES_FILE, JSON.stringify(quizzes, null, 2));
+};
+
+app.get('/quizzes', (req, res) => {
+    res.json(getQuizzes());
+});
+
+app.post('/quizzes', (req, res) => {
+    const { title, questions } = req.body;
+    if (!questions || !Array.isArray(questions)) return res.status(400).json({ error: 'Invalid data' });
+
+    const quizzes = getQuizzes();
+    const newQuiz = {
+        id: uuidv4(),
+        title: title || `Quiz ${new Date().toLocaleDateString()}`,
+        questions,
+        createdAt: new Date().toISOString()
+    };
+
+    quizzes.unshift(newQuiz);
+    saveQuizzes(quizzes);
+    res.json(newQuiz);
+});
+
+app.delete('/quizzes/:id', (req, res) => {
+    const { id } = req.params;
+    let quizzes = getQuizzes();
+    quizzes = quizzes.filter(q => q.id !== id);
+    saveQuizzes(quizzes);
+    res.json({ success: true });
 });
 
 

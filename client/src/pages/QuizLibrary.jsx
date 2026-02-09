@@ -8,21 +8,31 @@ export default function QuizLibrary() {
     const [previewQuiz, setPreviewQuiz] = useState(null);
 
     useEffect(() => {
-        const saved = localStorage.getItem('nst_quizzes');
-        if (saved) {
-            try {
-                setQuizzes(JSON.parse(saved));
-            } catch (e) {
-                console.error("Failed to parse quizzes", e);
-            }
-        }
+        fetchQuizzes();
     }, []);
 
-    const deleteQuiz = (id) => {
+    const fetchQuizzes = async () => {
+        try {
+            const isProduction = import.meta.env.PROD;
+            const url = isProduction ? '/quizzes' : `http://${window.location.hostname}:3000/quizzes`;
+            const res = await fetch(url);
+            const data = await res.json();
+            if (Array.isArray(data)) setQuizzes(data);
+        } catch (e) {
+            console.error("Failed to fetch quizzes", e);
+        }
+    };
+
+    const deleteQuiz = async (id) => {
         if (!confirm("Are you sure you want to delete this quiz?")) return;
-        const updated = quizzes.filter(q => q.id !== id);
-        setQuizzes(updated);
-        localStorage.setItem('nst_quizzes', JSON.stringify(updated));
+        try {
+            const isProduction = import.meta.env.PROD;
+            const url = isProduction ? `/quizzes/${id}` : `http://${window.location.hostname}:3000/quizzes/${id}`;
+            await fetch(url, { method: 'DELETE' });
+            setQuizzes(quizzes.filter(q => q.id !== id));
+        } catch (e) {
+            alert("Failed to delete quiz");
+        }
     };
 
     const startQuiz = (quiz) => {
