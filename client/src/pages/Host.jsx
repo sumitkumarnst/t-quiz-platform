@@ -242,7 +242,7 @@ export default function Host() {
                     <div className="flex gap-4 mb-12">
                         <button onClick={addQuestion} className="flex items-center gap-2 px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold rounded-lg transition-colors"><Plus size={20} /> Add Question</button>
                         <div className="flex-1 flex gap-2 justify-end">
-                            <button onClick={handleSaveQuiz} className="px-6 py-3 bg-white text-kahoot-blue border-2 border-kahoot-blue font-bold rounded-lg shadow-sm hover:bg-blue-50 transition-colors flex items-center gap-2">
+                            <button onClick={handleSaveQuiz} className="px-6 py-3 bg-kahoot-green text-white font-bold rounded-lg shadow-[0_6px_0_rgb(21,118,5)] active:shadow-none active:translate-y-[6px] transition-all flex items-center gap-2">
                                 <Save size={20} /> Save Quiz
                             </button>
                             <button onClick={handleCreateGame} className="px-8 py-3 bg-kahoot-purple text-white font-bold rounded-lg shadow-[0_6px_0_rgb(50,20,100)] active:shadow-none active:translate-y-[6px] transition-all">
