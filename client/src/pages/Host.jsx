@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useSocket } from '../context/SocketContext';
-import { Users, Play, ChevronRight, Plus, Trash2, Medal, Image as ImageIcon, Sparkles, FileText } from 'lucide-react';
+import { useLocation } from 'react-router-dom'; // Import useLocation
+import { Users, Play, ChevronRight, Plus, Trash2, Medal, Image as ImageIcon, Sparkles, FileText, Save } from 'lucide-react';
 
 export default function Host() {
     const socket = useSocket();
+    const location = useLocation(); // Hook to get passed state
     const [gamePin, setGamePin] = useState(null);
     const [players, setPlayers] = useState([]);
     const [status, setStatus] = useState('setup');
@@ -17,6 +19,7 @@ export default function Host() {
     const [isGenerating, setIsGenerating] = useState(false);
     const [genFile, setGenFile] = useState(null);
     const [genCount, setGenCount] = useState(5);
+    const [quizTitle, setQuizTitle] = useState(""); // Title for saving
 
     const [questions, setQuestions] = useState([
         {
@@ -31,6 +34,16 @@ export default function Host() {
             ]
         }
     ]);
+
+    // Load quiz from Library if passed
+    useEffect(() => {
+        if (location.state && location.state.loadQuiz) {
+            const loaded = location.state.loadQuiz;
+            setQuestions(loaded.questions);
+            setQuizTitle(loaded.title || "");
+            // Clear state to avoid reloading on refresh? (Optional, kept simple for now)
+        }
+    }, [location.state]);
 
     useEffect(() => {
         if (!socket) return;
@@ -125,6 +138,26 @@ export default function Host() {
         if (field === 'isCorrect' && value === true) n[qIdx].options.forEach((o, i) => { if (i !== oIdx) o.isCorrect = false; });
         setQuestions(n);
     };
+
+    // Save to LocalStorage
+    const handleSaveQuiz = () => {
+        const title = quizTitle.trim() || `Quiz ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}`;
+        if (!confirm(`Save this quiz as "${title}"?`)) return;
+
+        const newQuiz = {
+            id: Date.now().toString(),
+            title: title,
+            questions: questions,
+            createdAt: new Date().toISOString()
+        };
+
+        const saved = localStorage.getItem('nst_quizzes');
+        const quizzes = saved ? JSON.parse(saved) : [];
+        quizzes.unshift(newQuiz); // Add to top
+        localStorage.setItem('nst_quizzes', JSON.stringify(quizzes));
+        alert("Quiz saved to Library!");
+    };
+
     const handleCreateGame = () => {
         const isValid = questions.every(q => q.text.trim() && q.options.some(o => o.isCorrect));
         if (!isValid) return alert("Please check questions.");
@@ -140,6 +173,15 @@ export default function Host() {
             <div className="flex flex-col items-center min-h-screen bg-slate-100 p-8 overflow-y-auto">
                 <div className="w-full max-w-4xl">
                     <h2 className="text-4xl font-black mb-8 text-nst-primary text-center">Create Your Quiz</h2>
+
+                    {/* Quiz Title Input */}
+                    <input
+                        type="text"
+                        placeholder="Quiz Title (Optional)"
+                        value={quizTitle}
+                        onChange={(e) => setQuizTitle(e.target.value)}
+                        className="w-full text-2xl font-bold p-4 border-b-4 border-gray-300 bg-transparent text-center mb-8 focus:border-nst-primary outline-none"
+                    />
 
                     {/* AI Generator Box */}
                     <div className="bg-gradient-to-r from-purple-600 to-indigo-600 p-6 rounded-2xl shadow-xl mb-12 text-white">
@@ -199,7 +241,14 @@ export default function Host() {
                     ))}
                     <div className="flex gap-4 mb-12">
                         <button onClick={addQuestion} className="flex items-center gap-2 px-6 py-3 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold rounded-lg transition-colors"><Plus size={20} /> Add Question</button>
-                        <button onClick={handleCreateGame} className="flex-1 px-6 py-3 bg-kahoot-purple text-white font-bold rounded-lg shadow-[0_6px_0_rgb(50,20,100)] active:shadow-none active:translate-y-[6px] transition-all">Done & Create Game</button>
+                        <div className="flex-1 flex gap-2 justify-end">
+                            <button onClick={handleSaveQuiz} className="px-6 py-3 bg-white text-kahoot-blue border-2 border-kahoot-blue font-bold rounded-lg shadow-sm hover:bg-blue-50 transition-colors flex items-center gap-2">
+                                <Save size={20} /> Save Quiz
+                            </button>
+                            <button onClick={handleCreateGame} className="px-8 py-3 bg-kahoot-purple text-white font-bold rounded-lg shadow-[0_6px_0_rgb(50,20,100)] active:shadow-none active:translate-y-[6px] transition-all">
+                                Done & Create Game
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>

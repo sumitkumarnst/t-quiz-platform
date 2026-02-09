@@ -3,6 +3,7 @@ import { SocketProvider } from './context/SocketContext';
 import Home from './pages/Home';
 import Host from './pages/Host';
 import Player from './pages/Player';
+import QuizLibrary from './pages/QuizLibrary';
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/host" element={<Host />} />
+            <Route path="/library" element={<QuizLibrary />} />
             <Route path="/play" element={<Player />} />
           </Routes>
         </div>

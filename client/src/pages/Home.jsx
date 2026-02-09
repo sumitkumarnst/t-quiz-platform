@@ -67,7 +67,11 @@ export default function Home() {
                                 <GraduationCap size={48} className="text-kahoot-purple" />
                             </div>
                             <span className="text-2xl font-bold text-gray-800">I'm a Teacher</span>
-                            <span className="text-sm text-gray-500 font-medium">Host a quiz</span>
+                            <span className="text-sm text-gray-500 font-medium mb-2">Host a quiz</span>
+                            <div className="flex gap-2 w-full">
+                                <Link to="/host" className="flex-1 bg-kahoot-purple text-white py-2 rounded-lg font-bold text-sm hover:bg-opacity-90">Create</Link>
+                                <Link to="/library" className="flex-1 bg-gray-200 text-gray-700 py-2 rounded-lg font-bold text-sm hover:bg-gray-300">Library</Link>
+                            </div>
                         </div>
                     </Link>
                 </div>
