@@ -112,8 +112,12 @@ app.post('/generate-quiz', upload.array('files'), async (req, res) => {
         const truncatedText = fullText.substring(0, 40000); // Increased limit slightly
 
         const genAI = new GoogleGenerativeAI(apiKey);
-        // Using 'gemini-flash-latest' to find the best available free model
-        const model = genAI.getGenerativeModel({ model: "gemini-flash-latest" });
+
+        // Select Model (Default to Flash if invalid)
+        const validModels = ["gemini-1.5-flash", "gemini-1.5-pro"];
+        const selectedModel = validModels.includes(req.body.model) ? req.body.model : "gemini-1.5-flash";
+
+        const model = genAI.getGenerativeModel({ model: selectedModel });
 
         const prompt = `
             Analyze the following text content from multiple files and generate ${numQuestions} multiple-choice questions (MCQs) suitable for a quiz.

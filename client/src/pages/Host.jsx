@@ -210,6 +210,17 @@ export default function Host() {
                                 <label className="text-xs font-bold mb-1 block opacity-80">Questions</label>
                                 <input type="number" min="1" max="20" value={genCount} onChange={e => setGenCount(e.target.value)} className="w-full p-2 rounded text-black font-bold outline-none" />
                             </div>
+                            <div className="w-48">
+                                <label className="text-xs font-bold mb-1 block opacity-80">AI Model</label>
+                                <select
+                                    value={aiModel}
+                                    onChange={(e) => setAiModel(e.target.value)}
+                                    className="w-full p-2 rounded text-black font-bold outline-none cursor-pointer"
+                                >
+                                    <option value="gemini-1.5-flash">⚡ Flash (Speedy)</option>
+                                    <option value="gemini-1.5-pro">🧠 Pro (Smarter)</option>
+                                </select>
+                            </div>
                             <button
                                 onClick={handleAiGenerate}
                                 disabled={isGenerating || !genFile}
