@@ -12,10 +12,24 @@ export default function Home() {
                 <div className="absolute inset-0 bg-blue-950/80 mix-blend-multiply"></div> {/* Darker blue overlay */}
             </div>
 
-            {/* Glowing Yellow Lights (Subtle & Slow) - Adjusted positions to avoid button overlap */}
-            <div className="absolute top-[-50px] right-[-50px] w-64 h-64 bg-yellow-400/15 rounded-full blur-[120px] animate-pulse-slow"></div>
-            {/* Bottom-left light removed to fix artifact */}
-            <div className="absolute top-1/4 right-1/4 w-32 h-32 bg-yellow-200/10 rounded-full blur-[80px] animate-pulse-slow " style={{ animationDelay: '2s' }}></div>
+            {/* Glowing Bulbs */}
+            {/* Bulb 1: Top Right */}
+            <div className="absolute top-20 right-24 flex items-center justify-center animate-pulse-slow">
+                <div className="w-4 h-4 bg-white rounded-full shadow-[0_0_40px_20px_rgba(250,204,21,0.6)] z-10"></div>
+                <div className="absolute w-32 h-32 bg-yellow-500/20 rounded-full blur-2xl"></div>
+            </div>
+
+            {/* Bulb 2: Top Left */}
+            <div className="absolute top-32 left-32 flex items-center justify-center animate-pulse-slow" style={{ animationDelay: '1.5s' }}>
+                <div className="w-3 h-3 bg-white rounded-full shadow-[0_0_30px_15px_rgba(250,204,21,0.5)] z-10"></div>
+                <div className="absolute w-24 h-24 bg-yellow-500/20 rounded-full blur-xl"></div>
+            </div>
+
+            {/* Bulb 3: Bottom Right (Floating) */}
+            <div className="absolute bottom-40 right-1/4 flex items-center justify-center animate-pulse-slow" style={{ animationDelay: '3s' }}>
+                <div className="w-2 h-2 bg-white rounded-full shadow-[0_0_20px_10px_rgba(250,204,21,0.4)] z-10"></div>
+                <div className="absolute w-16 h-16 bg-yellow-500/10 rounded-full blur-lg"></div>
+            </div>
 
             <div className="z-10 text-center space-y-8 flex flex-col items-center">
                 <img
