@@ -10,9 +10,9 @@ export default function Home() {
 
             <div className="z-10 text-center space-y-8 flex flex-col items-center">
                 <img
-                    src="https://d3oznw89j3v0be.cloudfront.net/branding/ns-white-logo.svg"
+                    src="/nst-logo.png"
                     alt="Newton School of Technology"
-                    className="h-12 mb-2 drop-shadow-md opacity-90"
+                    className="h-20 mb-4 drop-shadow-md rounded-xl"
                 />
                 <h1 className="text-6xl font-black text-white drop-shadow-lg tracking-tight mb-2">
                     NST QUIZ
