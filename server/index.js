@@ -9,15 +9,20 @@ const path = require('path');
 const fs = require('fs');
 
 // File Parsers
-const pdfTodotxt = require('pdf-parse');
+const pdfParse = require('pdf-parse');
 const mammoth = require('mammoth');
 const officeParser = require('office-text-extractor');
+const extractor = officeParser.getTextExtractor();
 
 // AI
 const { GoogleGenerativeAI } = require("@google/generative-ai");
 
 const app = express();
 app.use(cors());
+
+// DEBUG: Check if API Key is loaded
+const key = process.env.GEMINI_API_KEY;
+console.log("Loaded API Key:", key ? `${key.substring(0, 5)}...${key.substring(key.length - 4)}` : "UNDEFINED");
 
 // Serve uploads
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
@@ -39,7 +44,7 @@ async function extractText(filePath, mimeType) {
 
     if (ext === '.pdf') {
         const dataBuffer = fs.readFileSync(filePath);
-        const data = await pdfTodotxt(dataBuffer);
+        const data = await pdfParse(dataBuffer);
         return data.text;
     }
     else if (ext === '.docx') {
@@ -47,7 +52,7 @@ async function extractText(filePath, mimeType) {
         return result.value;
     }
     else if (ext === '.pptx') {
-        const text = await officeParser.getText(filePath);
+        const text = await extractor.extractText({ input: filePath, type: 'file' });
         return text;
     }
     else if (ext === '.ipynb') {
@@ -76,24 +81,33 @@ app.post('/upload', upload.single('image'), (req, res) => {
     res.json({ url: `${protocol}://${host}/uploads/${req.file.filename}` });
 });
 
-app.post('/generate-quiz', upload.single('file'), async (req, res) => {
+app.post('/generate-quiz', upload.array('files'), async (req, res) => {
     try {
-        if (!req.file) return res.status(400).json({ error: 'No file uploaded' });
+        if (!req.files || req.files.length === 0) return res.status(400).json({ error: 'No files uploaded' });
 
         const apiKey = process.env.GEMINI_API_KEY;
         if (!apiKey) return res.status(500).json({ error: 'Server missing GEMINI_API_KEY in .env' });
 
         const numQuestions = req.body.numQuestions || 5;
-        const text = await extractText(req.file.path, req.file.mimetype);
+
+        // Extract text from ALL files
+        let fullText = "";
+        for (const file of req.files) {
+            const text = await extractText(file.path, file.mimetype);
+            fullText += `\n--- FILE: ${file.originalname} ---\n${text}`;
+            // Clean up immediately
+            fs.unlinkSync(file.path);
+        }
 
         // Clean up text slightly to avoid token limits if massive
-        const truncatedText = text.substring(0, 30000); // Reasonable limit for Free tier
+        const truncatedText = fullText.substring(0, 40000); // Increased limit slightly
 
         const genAI = new GoogleGenerativeAI(apiKey);
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+        // Using 'gemini-flash-latest' to find the best available free model
+        const model = genAI.getGenerativeModel({ model: "gemini-flash-latest" });
 
         const prompt = `
-            Analyze the following text and generate ${numQuestions} multiple-choice questions (MCQs) suitable for a quiz.
+            Analyze the following text content from multiple files and generate ${numQuestions} multiple-choice questions (MCQs) suitable for a quiz.
             Return ONLY a valid JSON array. Do not include markdown formatting (like \`\`\`json).
             Each object in the array should look like this:
             {
@@ -119,9 +133,6 @@ app.post('/generate-quiz', upload.single('file'), async (req, res) => {
         jsonString = jsonString.replace(/```json/g, '').replace(/```/g, '').trim();
 
         const questions = JSON.parse(jsonString);
-
-        // Clean up uploaded file
-        fs.unlinkSync(req.file.path);
 
         res.json({ questions });
 

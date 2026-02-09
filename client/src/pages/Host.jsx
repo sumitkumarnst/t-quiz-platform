@@ -83,7 +83,10 @@ export default function Host() {
 
         setIsGenerating(true);
         const formData = new FormData();
-        formData.append('file', genFile);
+        // Append all files
+        for (let i = 0; i < genFile.length; i++) {
+            formData.append('files', genFile[i]);
+        }
         formData.append('numQuestions', genCount);
 
         try {
@@ -149,9 +152,9 @@ export default function Host() {
                             <label className="flex-1 cursor-pointer bg-white/20 hover:bg-white/30 p-3 rounded-lg border border-white/30 transition-colors">
                                 <div className="flex items-center gap-2 text-sm font-medium">
                                     <FileText size={20} />
-                                    {genFile ? genFile.name : "Select Document (PDF, DOCX, PPTX, IPYNB)"}
+                                    {genFile ? `${genFile.length} files selected` : "Select Documents (PDF, DOCX, PPTX, IPYNB)"}
                                 </div>
-                                <input type="file" accept=".pdf,.docx,.pptx,.ipynb,.txt" className="hidden" onChange={e => setGenFile(e.target.files[0])} />
+                                <input type="file" multiple accept=".pdf,.docx,.pptx,.ipynb,.txt" className="hidden" onChange={e => setGenFile(e.target.files)} />
                             </label>
                             <div className="w-24">
                                 <label className="text-xs font-bold mb-1 block opacity-80">Questions</label>
